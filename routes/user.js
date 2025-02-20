@@ -3,6 +3,7 @@ const Router = express.Router;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { UserModel } = require("../db");
+const secret = "ashish9480";
 
 const userRouter = Router();
 
@@ -11,13 +12,17 @@ userRouter.post("/signup", async (req, res) => {
   const password = req.body.password;
   const username = req.body.username;
 
-  const hashedPassword = bcrypt.hash(password, 5);
+  const hashedPassword = await bcrypt.hash(password, 5);
 
-  await UserModel.create({
-    email: email,
-    password: hashedPassword,
-    username: username,
-  });
+  try {
+    await UserModel.create({
+      email: email,
+      password: hashedPassword,
+      username: username,
+    });
+  } catch (e) {
+    res.json({ message: "not able to signup" + e });
+  }
   res.json({
     message: "the user is signed up",
   });
