@@ -1,7 +1,14 @@
-app.post("/admin/signup", (req, res) => {});
+const { Router } = require("express");
+const adminRouter = Router();
 
-app.post("/admin/login", (req, res) => {});
+adminRouter.post("/signup", (req, res) => {});
 
-app.post("/admin/course", (req, res) => {});
+adminRouter.post("/login", (req, res) => {});
 
-app.get("/admin/course", (req, res) => {});
+adminRouter.post("/course", (req, res) => {});
+
+adminRouter.get("/course", (req, res) => {});
+
+module.exports = {
+  adminRouter: adminRouter,
+};
