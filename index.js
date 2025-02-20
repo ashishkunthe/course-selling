@@ -1,15 +1,10 @@
 const express = require("express");
+const { userRouter } = require("./routes/user");
+const { courseRouter } = require("./routes/course");
 
 const app = express();
 
-app.post("/user/signup", (req, res) => {});
-
-app.post("/user/login", (req, res) => {});
-
-app.post("/user/course", (req, res) => {});
-
-app.get("/user/course", (req, res) => {});
-
-app.get("/user/purchasedCourse", (req, res) => {});
+app.use("/user", userRouter);
+app.uer("course", courseRouter);
 
 app.listen(3000);
