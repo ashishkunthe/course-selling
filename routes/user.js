@@ -2,8 +2,9 @@ const express = require("express");
 const Router = express.Router;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { UserModel } = require("../db");
+const { UserModel, PurchaseModel, CourseModel } = require("../db");
 const { JWT_USER_SECRET } = require("../config");
+const userAuth = require("../middleware/userAuth");
 
 const userRouter = Router();
 
@@ -56,9 +57,22 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-userRouter.get("/course", (req, res) => {});
+userRouter.get("/purchases", userAuth, async (req, res) => {
+  const userId = req.userId;
 
-userRouter.get("/purchases", (req, res) => {});
+  const purchases = await PurchaseModel.find({
+    userId,
+  });
+
+  const courseData = await CourseModel.find({
+    _id: { $in: purchases.map((x) => x.courseId) },
+  });
+
+  res.json({
+    purchases: purchases,
+    courseData: courseData,
+  });
+});
 
 module.exports = {
   userRouter: userRouter,

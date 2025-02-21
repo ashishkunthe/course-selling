@@ -1,4 +1,4 @@
-const { Router, response } = require("express");
+const { Router } = require("express");
 const { AdminModel, CourseModel } = require("../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -66,7 +66,7 @@ adminRouter.post("/course", adminAuth, async (req, res) => {
 
   res.json({
     message: "course created",
-    couseId: course._id,
+    courseId: course._id,
   });
 });
 
@@ -76,8 +76,19 @@ adminRouter.put("/course", adminAuth, async (req, res) => {
 
   const course = await CourseModel.updateOne(
     { _id: courseId, creatorId: adminId },
-    { title: title, description: description, price: price, imageUrl: imageUrl }
+    {
+      title: title,
+      description: description,
+      price: price,
+      imageUrl: imageUrl,
+    }
   );
+
+  if (!course) {
+    return res
+      .status(404)
+      .json({ message: "Course not found or unauthorized" });
+  }
 
   res.json({
     message: "updated sucessfully",

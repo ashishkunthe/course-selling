@@ -15,6 +15,4 @@ function adminAuth(req, res, next) {
   }
 }
 
-module.exports = {
-  adminAuth: adminAuth,
-};
+module.exports = adminAuth;
