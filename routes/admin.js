@@ -71,21 +71,17 @@ adminRouter.post("/course", adminAuth, async (req, res) => {
 });
 
 adminRouter.put("/course", adminAuth, async (req, res) => {
-  const { title, description, price, imageUrl, courseId } = req.body.courseId;
-  const findCourse = await CourseModel.findOne({
-    courseId,
-  });
+  const adminId = req.adminId;
+  const { title, description, price, imageUrl, courseId } = req.body;
 
-  if (findCourse) {
-    findCourse.updateOne({
-      title,
-      description,
-      price,
-      imageUrl,
-    });
-  }
+  const course = await CourseModel.updateOne(
+    { _id: courseId, creatorId: adminId },
+    { title: title, description: description, price: price, imageUrl: imageUrl }
+  );
+
   res.json({
     message: "updated sucessfully",
+    courseId: course._id,
   });
 });
 
