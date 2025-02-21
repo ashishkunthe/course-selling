@@ -1,8 +1,9 @@
 const { Router, response } = require("express");
-const { AdminModel } = require("../db");
+const { AdminModel, CourseModel } = require("../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const secret = "akash9480";
+const { JWT_ADMIN_SECRET } = require("../config");
+const adminAuth = require("../middleware/adminAuth");
 
 const adminRouter = Router();
 
@@ -40,7 +41,7 @@ adminRouter.post("/login", async (req, res) => {
   const passwordIsValid = await bcrypt.compare(password, response.password);
 
   if (passwordIsValid) {
-    const token = jwt.sign({ id: response._id }, secret);
+    const token = jwt.sign({ id: response._id }, JWT_ADMIN_SECRET);
     res.json({
       token: token,
     });
@@ -51,11 +52,54 @@ adminRouter.post("/login", async (req, res) => {
   }
 });
 
-adminRouter.post("/", (req, res) => {});
+adminRouter.post("/course", adminAuth, async (req, res) => {
+  const adminId = req.adminId;
+  const { title, description, price, imageUrl } = req.body;
 
-adminRouter.put("/", (req, res) => {});
+  const course = await CourseModel.create({
+    title,
+    description,
+    price,
+    imageUrl,
+    creatorId: adminId,
+  });
 
-adminRouter.get("/bulk", (req, res) => {});
+  res.json({
+    message: "course created",
+    couseId: course._id,
+  });
+});
+
+adminRouter.put("/course", adminAuth, async (req, res) => {
+  const { title, description, price, imageUrl, courseId } = req.body.courseId;
+  const findCourse = await CourseModel.findOne({
+    courseId,
+  });
+
+  if (findCourse) {
+    findCourse.updateOne({
+      title,
+      description,
+      price,
+      imageUrl,
+    });
+  }
+  res.json({
+    message: "updated sucessfully",
+  });
+});
+
+adminRouter.get("/bulk", adminAuth, async (req, res) => {
+  const adminId = req.adminId;
+
+  const courses = await CourseModel.findOne({
+    creatorId: adminId,
+  });
+
+  res.json({
+    courses: courses,
+  });
+});
 
 module.exports = {
   adminRouter: adminRouter,

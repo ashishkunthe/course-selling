@@ -3,7 +3,7 @@ const Router = express.Router;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { UserModel } = require("../db");
-const secret = "ashish9480";
+const { JWT_USER_SECRET } = require("../config");
 
 const userRouter = Router();
 
@@ -45,7 +45,7 @@ userRouter.post("/login", async (req, res) => {
   const passwordIsValid = await bcrypt.compare(password, response.password);
 
   if (passwordIsValid) {
-    const token = jwt.sign({ id: response._id }, secret);
+    const token = jwt.sign({ id: response._id }, JWT_USER_SECRET);
     res.json({
       token: token,
     });

@@ -12,9 +12,7 @@ app.use("/course", courseRouter);
 app.use("/admin", adminRouter);
 
 async function main() {
-  await mongoose.connect(
-    "mongodb+srv://ashish:9480916537@cluster0.0zkoh.mongodb.net/course-selling"
-  );
+  await mongoose.connect();
   app.listen(3000);
 }
 
